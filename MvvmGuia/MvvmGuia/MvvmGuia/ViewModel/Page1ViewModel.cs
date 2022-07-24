@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvvmGuia.Views;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,11 @@ namespace MvvmGuia.ViewModel
         string _Numero2;
         string _Resultado;
 
+        string _TipoUsuario;
+
+        DateTime _Fecha;
+        string _ResultadoFecha;
+
         bool _Visible;
 
         #endregion
@@ -23,6 +29,7 @@ namespace MvvmGuia.ViewModel
         public Page1ViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            Fecha = DateTime.Now;
         }
         #endregion
 
@@ -33,6 +40,45 @@ namespace MvvmGuia.ViewModel
             set
             {
                 SetValue(ref _Mensaje, value);
+            }
+        }
+
+        //ANALIZAR ESTA SECCION
+        public string TipoUsuario
+        {
+            get { return _TipoUsuario; }
+            set { SetValue(ref _TipoUsuario, value); }
+        }
+        //PASA EL DATO SELECCIONADO AL STRING CREADO MAS ARRIBA
+        public string TipoSeleccionado 
+        {
+            get { return _TipoUsuario; }
+            set 
+            {
+                SetProperty(ref _TipoUsuario, value);
+                TipoUsuario = _TipoUsuario;
+            }
+        }
+
+        public string ResultadoFecha
+        {
+            get { return _ResultadoFecha; }
+            set 
+            {
+                SetValue(ref _ResultadoFecha, value);
+            }
+        }
+
+        public DateTime Fecha
+        {
+            get { return _Fecha; }
+            set 
+            {
+                //_Fecha = value;
+                //OnpropertyChanged(Fecha.ToString());
+                SetValue(ref _Fecha, value);
+                ResultadoFecha = _Fecha.ToString("dd/MM/yyyy");
+
             }
         }
 
@@ -74,6 +120,14 @@ namespace MvvmGuia.ViewModel
         #endregion
 
         #region PROCESOS
+        public async Task VolverAsync()
+        {
+            await Navigation.PopAsync();
+        }
+        public async Task NavegacionPagina()
+        {
+            await Navigation.PushAsync(new Page2());
+        }
         public async Task AlertaAsyncrono()
         {
             await DisplayAlert("Titulo", Mensaje, "OK");
@@ -94,6 +148,8 @@ namespace MvvmGuia.ViewModel
         #endregion
 
         #region COMANDOS
+        public ICommand VolverAsyncCommand => new Command(async () => await VolverAsync());
+        public ICommand NavegacionAsyncCommand => new Command(async () => await NavegacionPagina());
         public ICommand AlertAsyncCommand => new Command(async () => await AlertaAsyncrono());
         public ICommand SumarCommand => new Command(Sumar);
         #endregion
